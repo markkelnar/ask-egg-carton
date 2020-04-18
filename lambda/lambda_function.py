@@ -47,7 +47,7 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
         egg_value = ask_utils.request_util.get_slot_value(
             handler_input=handler_input, slot_name="numberEggs")
 
-        speak_output = f"You collected {egg_value}"
+        speak_output = "You collected {egg}".format(egg=egg_value)
 
         return (
             handler_input.response_builder
