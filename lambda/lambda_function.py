@@ -27,7 +27,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Welcome, you can say Hello or Help. Which would you like to try?"
+        speak_output = "Cock-a-doodle-doo! Did you collect eggs?"
 
         return (
             handler_input.response_builder
@@ -47,28 +47,13 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         speak_output = "How many did you collect?"
 
-        return (
-            handler_input.response_builder
-                .speak(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
-                .response
-        )
-
-
-class HelloWorldIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("HelloWorldIntent")(handler_input)
-
-    def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
-        speak_output = "Hello Yo!"
+        egg_value = request_util.get_slot_value(
+            handler_input=handler_input, slot_name="numberEggs")
 
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
+                .ask(speak_output)
                 .response
         )
 
@@ -177,7 +162,6 @@ sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(CollectEggsIntentHandler())
-sb.add_request_handler(HelloWorldIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())

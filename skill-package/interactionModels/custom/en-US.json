@@ -16,26 +16,20 @@
           "samples": []
         },
         {
-          "name": "HelloWorldIntent",
-          "slots": [],
-          "samples": [
-            "hello",
-            "how are you",
-            "say hi world",
-            "say hi",
-            "hi",
-            "say hello world",
-            "say hello"
-          ]
-        },
-        {
           "name": "CollectEggsIntent",
-          "slots": [],
+          "slots": [
+            {
+              "name": "numberEggs",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
           "samples": [
-            "add",
-            "collect",
-            "collected",
-            "put"
+            "add {numberEggs}",
+            "collect {numberEggs}",
+            "collected {numberEggs}",
+            "put {numberEggs}",
+            "save {numberEggs}",
+            "{numberEggs}"
           ]
         },
         {
