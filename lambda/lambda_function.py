@@ -44,10 +44,10 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
         return ask_utils.is_intent_name("CollectEggsIntent")(handler_input)
 
     def handle(self, handler_input):
-        egg_value = ask_utils.request_util.get_slot_value(
+        egg_value = ask_utils.get_slot_value(
             handler_input=handler_input, slot_name="numberEggs")
 
-        speak_output = "You collected {egg}".format(egg=egg_value)
+        speak_output = f"You collected {egg_value}"
 
         return (
             handler_input.response_builder
