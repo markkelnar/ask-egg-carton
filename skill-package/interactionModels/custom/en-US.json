@@ -19,17 +19,21 @@
           "name": "CollectEggsIntent",
           "slots": [
             {
-              "name": "numberEggs",
+              "name": "NumberEggs",
               "type": "AMAZON.NUMBER"
             }
           ],
           "samples": [
-            "add {numberEggs}",
-            "collect {numberEggs}",
-            "collected {numberEggs}",
-            "put {numberEggs}",
-            "save {numberEggs}",
-            "{numberEggs}"
+            "add {NumberEggs}",
+            "add {NumberEggs} eggs",
+            "collect {NumberEggs}",
+            "collect {NumberEggs} eggs",
+            "collected {NumberEggs}",
+            "collected {NumberEggs} eggs",
+            "put {NumberEggs}",
+            "put {NumberEggs} eggs",
+            "save {NumberEggs}",
+            "save {NumberEggs} eggs"
           ]
         },
         {
@@ -40,5 +44,5 @@
       "types": []
     }
   },
-  "version": "11"
+  "version": "12"
 }
