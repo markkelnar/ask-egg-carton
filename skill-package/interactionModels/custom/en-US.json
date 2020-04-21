@@ -16,6 +16,12 @@
           "samples": []
         },
         {
+          "name": "ScrewLooseIntent",
+          "samples": [
+            "is ian crazy"
+          ]
+        },
+        {
           "name": "CollectEggsIntent",
           "slots": [
             {
