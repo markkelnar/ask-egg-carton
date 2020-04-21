@@ -16,17 +16,11 @@
           "samples": []
         },
         {
-          "name": "ScrewLooseIntent",
-          "samples": [
-            "is ian crazy"
-          ]
-        },
-        {
           "name": "CollectEggsIntent",
           "slots": [
             {
               "name": "NumberEggs",
-              "type": "AMAZON.NUMBER"
+              "type": "AMAZON.Color"
             }
           ],
           "samples": [
@@ -50,5 +44,5 @@
       "types": []
     }
   },
-  "version": "12"
+  "version": "18"
 }

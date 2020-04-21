@@ -38,23 +38,6 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
 
 
-class ScrewLooseIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("ScrewLooseIntent")(handler_input)
-
-    def handle(self, handler_input):
-        speak_output = "Yes, Ian has a screw loose."
-
-        return (
-            handler_input.response_builder
-                .speak(speak_output)
-                .ask(speak_output)
-                .response
-        )
-
-
 class CollectEggsIntentHandler(AbstractRequestHandler):
     """Handler for Hello World Intent."""
     def can_handle(self, handler_input):
@@ -63,7 +46,7 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         egg_value = ask_utils.get_slot_value(
-            handler_input=handler_input, slot_name="numberEggs")
+            handler_input=handler_input, slot_name="NumberEggs")
 
         speak_output = f"You collected {egg_value}"
 
@@ -178,7 +161,6 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
-sb.add_request_handler(ScrewLooseIntentHandler())
 sb.add_request_handler(CollectEggsIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
