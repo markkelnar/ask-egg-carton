@@ -20,7 +20,7 @@
           "slots": [
             {
               "name": "NumberEggs",
-              "type": "AMAZON.Color"
+              "type": "AMAZON.NUMBER"
             }
           ],
           "samples": [
@@ -44,5 +44,5 @@
       "types": []
     }
   },
-  "version": "18"
+  "version": "20"
 }
