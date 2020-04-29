@@ -30,7 +30,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Cock-a-doodle-doo! bock bock bock. Did you collect eggs?"
+        speak_output = "Cock-a-doodle-doo!"
 
         return (
             handler_input.response_builder
@@ -53,6 +53,7 @@ class TestIntentHandler(AbstractRequestHandler):
 
         con = db()
         con.do()
+        con.disconnect()
 
         speak_output = f"connect {con.database} {con.dbuser} {con.port}"
         #speak_output = "Looks like test was successful"
@@ -75,7 +76,13 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
         egg_value = ask_utils.get_slot_value(
             handler_input=handler_input, slot_name="NumberEggs")
 
-        speak_output = f"You collected {egg_value}"
+        con = db()
+        con.insert(egg_value)
+
+        average = con.average(days=7)
+        speak_output = f"You are averaging {average} eggs for the past 7 days"
+
+        con.disconnect()
 
         return (
             handler_input.response_builder

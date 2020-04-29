@@ -20,24 +20,69 @@ class db:
         self.database = environ.get('DB_DATABASE')
         self.dbuser = environ.get('DB_USER')
         self.password = environ.get('DB_PASSWORD')
+        self.connection = None
 
 
-    def make_connection(self):
+    def connect(self):
         conn_str = "host={0} dbname={1} user={2} password={3} port={4}".format(
             self.endpoint, self.database, self.dbuser, self.password, self.port)
-        logging(f"connect {self.database} : {self.dbuser}")
-        conn = psycopg2.connect(conn_str)
-        conn.autocommit=True
-        return conn 
+        self.connection = psycopg2.connect(conn_str)
+        self.connection.autocommit=True
+        return self.connection
 
 
-    def do(self):
+    def disconnect(self):
         try:
-            conn = self.make_connection()
+            self.connection.close()
+            self.connection = None
+        except:
+            pass
+
+
+    def insert(self, number):
+        try:
+            self.connect()
+            cursor = self.connection.cursor()
+
+            sql = """ INSERT INTO eggs (collected) VALUES (%d) """
+            data = (number)
+            cursor.execute(sql, data)
+
+            self.connection.commit()
+            count = cursor.rowcount
+
+            print (count, "Record inserted successfully into mobile table")
+
+        except (Exception, psycopg2.Error) as error :
+            if(self.connection):
+                print("Failed to insert record into mobile table", error)
+
+
+    def average(self, days):
+        try:
+            self.connect()
             cursor = conn.cursor()
 
+            sql = f""" SELECT ".
+                    "TO_CHAR(avg(collected), 'FM999999999') AS average ".
+                    "FROM eggs ".
+                    "WHERE created_on >= NOW() - INTERVAL '{days} DAYS' """
+            cursor.execute(sql)
+            data = cursor.fetchone()
+            return data
+
+        except (Exception, psycopg2.Error) as error :
+            if(self.connection):
+                print("Failed to insert record into mobile table", error)
+
+
+    def test(self):
+        try:
+            self.connect()
+            cursor = self.connection.cursor()
+
             try:
-                query="SELECT * FROM postgres.eggs"
+                query="SELECT * FROM eggs"
                 cursor.execute(query)
             except:
                 logging("execute error")
@@ -59,12 +104,6 @@ class db:
         except:
             return {"body": "ERROR: Cannot connect to database from handler.\n{}".format(
                 traceback.format_exc())}
-
-        finally:
-            try:
-                conn.close()
-            except:
-                pass
 
 
     def get_secret(self):
