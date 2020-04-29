@@ -25,14 +25,19 @@
           ],
           "samples": [
             "add {NumberEggs}",
+            "add {NumberEggs} egg",
             "add {NumberEggs} eggs",
             "collect {NumberEggs}",
+            "collect {NumberEggs} egg",
             "collect {NumberEggs} eggs",
             "collected {NumberEggs}",
+            "collected {NumberEggs} egg",
             "collected {NumberEggs} eggs",
             "put {NumberEggs}",
+            "put {NumberEggs} egg",
             "put {NumberEggs} eggs",
             "save {NumberEggs}",
+            "save {NumberEggs} egg",
             "save {NumberEggs} eggs"
           ]
         },

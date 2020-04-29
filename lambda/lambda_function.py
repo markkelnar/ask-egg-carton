@@ -14,7 +14,8 @@ from ask_sdk_core.handler_input import HandlerInput
 
 from ask_sdk_model import Response
 
-import db
+from .db import db
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -50,7 +51,11 @@ class TestIntentHandler(AbstractRequestHandler):
         egg_value = ask_utils.get_slot_value(
             handler_input=handler_input, slot_name="NumberEggs")
 
-        con = db.db()
+        con = db()
+        con.do()
+
+        speak_output = f"connect {con.database} {con.dbuser} {con.port}"
+        #speak_output = "Looks like test was successful"
 
         return (
             handler_input.response_builder
@@ -183,7 +188,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
-sb.add_request_handler(TestRequestHandler())
+sb.add_request_handler(TestIntentHandler())
 sb.add_request_handler(CollectEggsIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())

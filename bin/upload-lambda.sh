@@ -13,7 +13,7 @@ deactivate
 
 # Build bundle of files for the lambda job
 rm function.zip
-cd v-env/lib/python3.7/site-packages/ ; zip -r ${OLDPWD}/function.zip . ; cd -
+cd v-env/lib/python3.7/site-packages/ ; zip --quiet -r ${OLDPWD}/function.zip . ; cd -
 zip -rg function.zip lambda/
 
 # Push the bundle to the lambda job
