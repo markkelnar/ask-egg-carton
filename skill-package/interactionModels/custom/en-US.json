@@ -37,6 +37,20 @@
           ]
         },
         {
+          "name": "TestIntent",
+          "slots": [
+            {
+              "name": "number",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "test database",
+            "test {number} things",
+            "test a thing"
+          ]
+        },
+        {
           "name": "AMAZON.NavigateHomeIntent",
           "samples": []
         }

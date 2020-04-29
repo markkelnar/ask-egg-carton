@@ -14,6 +14,8 @@ from ask_sdk_core.handler_input import HandlerInput
 
 from ask_sdk_model import Response
 
+import db
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -36,6 +38,26 @@ class LaunchRequestHandler(AbstractRequestHandler):
                 .response
         )
 
+
+
+class TestIntentHandler(AbstractRequestHandler):
+    """Handler for Hello World Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return ask_utils.is_intent_name("TestIntent")(handler_input)
+
+    def handle(self, handler_input):
+        egg_value = ask_utils.get_slot_value(
+            handler_input=handler_input, slot_name="NumberEggs")
+
+        con = db.db()
+
+        return (
+            handler_input.response_builder
+                .speak(speak_output)
+                .ask(speak_output)
+                .response
+        )
 
 
 class CollectEggsIntentHandler(AbstractRequestHandler):
@@ -161,6 +183,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
+sb.add_request_handler(TestRequestHandler())
 sb.add_request_handler(CollectEggsIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
