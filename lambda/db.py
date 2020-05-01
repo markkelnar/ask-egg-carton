@@ -46,11 +46,10 @@ class DatabaseThing:
         try:
             self.connect()
             cursor = self.connection.cursor()
-
-            sql = """ INSERT INTO eggs (collected) VALUES (%d) """
-            logger.info(sql)
-            data = (number)
-            cursor.execute(sql, data)
+            cursor.execute(
+                "INSERT INTO eggs (collected) VALUES (%s)",
+                (number)
+            )
             self.connection.commit()
 
         except (Exception, psycopg2.Error) as error :
@@ -76,9 +75,7 @@ class DatabaseThing:
                 ) b
                 """
             cursor.execute(sql)
-            data = cursor.fetchone()
-            logger.info(f"DATA {data[0]}")
-            return data[0]
+            return cursor.fetchone()[0]
         except (Exception, psycopg2.Error) as error :
             if(self.connection):
                 logger.error("Failed to query record", error)
@@ -90,7 +87,7 @@ class DatabaseThing:
             cursor = self.connection.cursor()
 
             try:
-                query="SELECT sum(collected) as sum FROM eggs"
+                query="SELECT sum(collected) FROM eggs"
                 cursor.execute(query)
                 return cursor.fetchone()[0]
             except:

@@ -79,19 +79,15 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
         egg_value = ask_utils.get_slot_value(
             handler_input=handler_input, slot_name="NumberEggs")
 
-        con = db()
+        con = DatabaseThing()
         if egg_value:
             con.insert_eggs(number=egg_value)
             speak_output = f"Added {egg_value} to the basket"
         else:
             speak_output = "That's not a valid number"
-
-        #average = con.average_eggs(days=7)
-        #speak_output = f"You are averaging {average} eggs for the past 7 days"
-        logger.info(speak_output)
-
         con.disconnect()
 
+        logger.info(speak_output)
         return (
             handler_input.response_builder
                 .speak(speak_output)
