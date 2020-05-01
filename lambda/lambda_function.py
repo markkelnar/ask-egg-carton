@@ -14,7 +14,7 @@ from ask_sdk_core.handler_input import HandlerInput
 
 from ask_sdk_model import Response
 
-from .db import db
+from .db import DatabaseThing
 
 
 logger = logging.getLogger(__name__)
@@ -51,12 +51,14 @@ class TestIntentHandler(AbstractRequestHandler):
         egg_value = ask_utils.get_slot_value(
             handler_input=handler_input, slot_name="NumberEggs")
 
-        con = db()
-        con.do()
+        con = DatabaseThing()
+        sum = con.test()
+        avg = con.average(days=7)
         con.disconnect()
 
-        speak_output = f"connect {con.database} {con.dbuser} {con.port}"
-        #speak_output = "Looks like test was successful"
+        #speak_output = f"connect {con.database} {con.dbuser} {con.port}"
+        speak_output = f"I see {sum} eggs collected total and averaging {avg} per day for 7 days"
+        logger.info(speak_output)
 
         return (
             handler_input.response_builder
@@ -77,10 +79,15 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
             handler_input=handler_input, slot_name="NumberEggs")
 
         con = db()
-        con.insert(egg_value)
+        if egg_value:
+            con.insert(number=egg_value)
+            speak_output = f"Added {egg_value} to the basket"
+        else:
+            speak_output = "That's not a valid number"
 
-        average = con.average(days=7)
-        speak_output = f"You are averaging {average} eggs for the past 7 days"
+        #average = con.average(days=7)
+        #speak_output = f"You are averaging {average} eggs for the past 7 days"
+        logger.info(speak_output)
 
         con.disconnect()
 

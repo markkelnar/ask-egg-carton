@@ -11,8 +11,11 @@ import psycopg2
 import traceback
 from os import environ
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-class db:
+
+class DatabaseThing:
 
     def __init__(self):
         self.endpoint = environ.get('DB_ENDPOINT')
@@ -24,10 +27,10 @@ class db:
 
 
     def connect(self):
-        conn_str = "host={0} dbname={1} user={2} password={3} port={4}".format(
+        connection_str = "host={0} dbname={1} user={2} password={3} port={4}".format(
             self.endpoint, self.database, self.dbuser, self.password, self.port)
-        self.connection = psycopg2.connect(conn_str)
-        self.connection.autocommit=True
+        self.connection = psycopg2.connect(connection_str)
+        self.connection.autocommit = True
         return self.connection
 
 
@@ -45,35 +48,36 @@ class db:
             cursor = self.connection.cursor()
 
             sql = """ INSERT INTO eggs (collected) VALUES (%d) """
+            logger.info(sql)
             data = (number)
             cursor.execute(sql, data)
-
             self.connection.commit()
-            count = cursor.rowcount
-
-            print (count, "Record inserted successfully into mobile table")
 
         except (Exception, psycopg2.Error) as error :
             if(self.connection):
-                print("Failed to insert record into mobile table", error)
+                logger.error("Failed to insert record into table", error)
 
 
-    def average(self, days):
+    def average(self, days=7):
         try:
             self.connect()
-            cursor = conn.cursor()
+            cursor = self.connection.cursor()
 
-            sql = f""" SELECT ".
-                    "TO_CHAR(avg(collected), 'FM999999999') AS average ".
-                    "FROM eggs ".
-                    "WHERE created_on >= NOW() - INTERVAL '{days} DAYS' """
+            sql = f""" SELECT (
+                TRUNC(sum(b.collected_sum) / {days}, 1) as average
+                FROM (
+                    SELECT sum(collected) as collected_sum
+                    FROM eggs
+                    WHERE created_on >= NOW() - INTERVAL '{days} DAYS'
+                    GROUP BY date_trunc('day', created_on)
+                ) b
+                """
             cursor.execute(sql)
             data = cursor.fetchone()
-            return data
-
+            return [ average for average in data ]
         except (Exception, psycopg2.Error) as error :
             if(self.connection):
-                print("Failed to insert record into mobile table", error)
+                logger.error("Failed to query record", error)
 
 
     def test(self):
@@ -82,28 +86,15 @@ class db:
             cursor = self.connection.cursor()
 
             try:
-                query="SELECT * FROM eggs"
+                query="SELECT sum(collected) as sum FROM eggs"
                 cursor.execute(query)
+                data = cursor.fetchone()
+                return [ sum for sum in data ]
             except:
-                logging("execute error")
-                return ("Error execute error")
-
-            try:
-                results_list=[]
-                for result in cursor: results_list.append(result)
-                print(results_list)
-                cursor.close()
-
-            except:
-                logging("query error")
-                return ("Error query error")
-
-            return {"body": str(results_list), "headers": {}, "statusCode": 200,
-            "isBase64Encoded":"false"}
-        
+                logger.error("execute error")
+                return "Error execute error"
         except:
-            return {"body": "ERROR: Cannot connect to database from handler.\n{}".format(
-                traceback.format_exc())}
+            return "exception"
 
 
     def get_secret(self):
