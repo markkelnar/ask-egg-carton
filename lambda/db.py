@@ -42,7 +42,7 @@ class DatabaseThing:
             pass
 
 
-    def insert(self, number):
+    def insert_eggs(self, number):
         try:
             self.connect()
             cursor = self.connection.cursor()
@@ -58,13 +58,16 @@ class DatabaseThing:
                 logger.error("Failed to insert record into table", error)
 
 
-    def average(self, days=7):
+    def average_eggs(self, days=7):
         try:
             self.connect()
             cursor = self.connection.cursor()
 
-            sql = f""" SELECT (
-                TRUNC(sum(b.collected_sum) / {days}, 1) as average
+            sql = f""" SELECT
+                TRUNC(
+                    (sum(b.collected_sum) / {days}),
+                    1
+                )
                 FROM (
                     SELECT sum(collected) as collected_sum
                     FROM eggs
@@ -74,13 +77,14 @@ class DatabaseThing:
                 """
             cursor.execute(sql)
             data = cursor.fetchone()
-            return [ average for average in data ]
+            logger.info(f"DATA {data[0]}")
+            return data[0]
         except (Exception, psycopg2.Error) as error :
             if(self.connection):
                 logger.error("Failed to query record", error)
 
 
-    def test(self):
+    def total_eggs(self):
         try:
             self.connect()
             cursor = self.connection.cursor()
@@ -88,8 +92,7 @@ class DatabaseThing:
             try:
                 query="SELECT sum(collected) as sum FROM eggs"
                 cursor.execute(query)
-                data = cursor.fetchone()
-                return [ sum for sum in data ]
+                return cursor.fetchone()[0]
             except:
                 logger.error("execute error")
                 return "Error execute error"

@@ -42,7 +42,7 @@
           ]
         },
         {
-          "name": "TestIntent",
+          "name": "ReportNumbersIntent",
           "slots": [
             {
               "name": "number",
@@ -50,9 +50,8 @@
             }
           ],
           "samples": [
-            "test database",
-            "test {number} things",
-            "test a thing"
+            "whats my average",
+            "how many eggs have I collected"
           ]
         },
         {

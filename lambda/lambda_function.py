@@ -41,23 +41,24 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
 
 
-class TestIntentHandler(AbstractRequestHandler):
+class ReportIntentHandler(AbstractRequestHandler):
     """Handler for Hello World Intent."""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("TestIntent")(handler_input)
+        return ask_utils.is_intent_name("ReportNumbersIntent")(handler_input)
 
     def handle(self, handler_input):
         egg_value = ask_utils.get_slot_value(
             handler_input=handler_input, slot_name="NumberEggs")
 
         con = DatabaseThing()
-        sum = con.test()
-        avg = con.average(days=7)
+        day_window = 7
+        sum = con.total_eggs()
+        avg = str(con.average_eggs(days=day_window))
         con.disconnect()
 
         #speak_output = f"connect {con.database} {con.dbuser} {con.port}"
-        speak_output = f"I see {sum} eggs collected total and averaging {avg} per day for 7 days"
+        speak_output = f"I see {sum} eggs collected total and averaging {avg} per day for {day_window} days"
         logger.info(speak_output)
 
         return (
@@ -80,12 +81,12 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
 
         con = db()
         if egg_value:
-            con.insert(number=egg_value)
+            con.insert_eggs(number=egg_value)
             speak_output = f"Added {egg_value} to the basket"
         else:
             speak_output = "That's not a valid number"
 
-        #average = con.average(days=7)
+        #average = con.average_eggs(days=7)
         #speak_output = f"You are averaging {average} eggs for the past 7 days"
         logger.info(speak_output)
 
@@ -202,7 +203,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
-sb.add_request_handler(TestIntentHandler())
+sb.add_request_handler(ReportIntentHandler())
 sb.add_request_handler(CollectEggsIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
