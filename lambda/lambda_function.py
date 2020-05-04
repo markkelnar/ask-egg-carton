@@ -21,6 +21,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+def get_id(handler_input):
+    return ask_utils.request_util.get_user_id(handler_input)
+
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
     def can_handle(self, handler_input):
@@ -51,15 +55,17 @@ class ReportIntentHandler(AbstractRequestHandler):
         egg_value = ask_utils.get_slot_value(
             handler_input=handler_input, slot_name="NumberEggs")
 
+        user_id = get_id(handler_input)
+
         con = DatabaseThing()
         day_window = 7
-        sum = con.total_eggs()
-        avg = str(con.average_eggs(days=day_window))
+        sum = con.total_eggs(user_id=user_id)
+        avg = str(con.average_eggs(days=day_window, user_id=user_id))
         con.disconnect()
 
         #speak_output = f"connect {con.database} {con.dbuser} {con.port}"
         speak_output = f"I see {sum} eggs collected total and averaging {avg} per day for {day_window} days"
-        logger.info(speak_output)
+        logger.info(user_id, speak_output)
 
         return (
             handler_input.response_builder
@@ -79,15 +85,18 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
         egg_value = ask_utils.get_slot_value(
             handler_input=handler_input, slot_name="NumberEggs")
 
+        user_id = get_id(handler_input)
+
         con = DatabaseThing()
         if egg_value:
-            con.insert_eggs(number=egg_value)
+            con.insert_eggs(number=egg_value, user_id=user_id)
             speak_output = f"Added {egg_value} to the basket"
         else:
-            speak_output = "That's not a valid number"
+            speak_output = f"{egg_value} is not a valid number"
         con.disconnect()
 
-        logger.info(speak_output)
+        logger.info(user_id, speak_output)
+
         return (
             handler_input.response_builder
                 .speak(speak_output)
@@ -104,7 +113,7 @@ class HelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "You can say hello to me! How can I help?"
+        speak_output = "You can tell me how many eggs you have with words like add, put, save, collect."
 
         return (
             handler_input.response_builder
