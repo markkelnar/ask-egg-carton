@@ -47,8 +47,8 @@ class DatabaseThing:
             self.connect()
             cursor = self.connection.cursor()
             cursor.execute(
-                "INSERT INTO eggs (collected) VALUES (%s)",
-                (number)
+                "INSERT INTO eggs (user_id, collected) VALUES (%s, %s)",
+                (user_id, number)
             )
             self.connection.commit()
 
@@ -57,7 +57,7 @@ class DatabaseThing:
                 logger.error("Failed to insert record into table", error)
 
 
-    def average_eggs(self, days=7, user_id):
+    def average_eggs(self, days=7, user_id=0):
         try:
             self.connect()
             cursor = self.connection.cursor()
@@ -70,7 +70,8 @@ class DatabaseThing:
                 FROM (
                     SELECT sum(collected) as collected_sum
                     FROM eggs
-                    WHERE created_on >= NOW() - INTERVAL '{days} DAYS'
+                    WHERE user_id = '{user_id}'
+                        AND created_on >= NOW() - INTERVAL '{days} DAYS'
                     GROUP BY date_trunc('day', created_on)
                 ) b
                 """
@@ -87,8 +88,9 @@ class DatabaseThing:
             cursor = self.connection.cursor()
 
             try:
-                query="SELECT sum(collected) FROM eggs"
+                query = f"SELECT sum(collected) FROM eggs WHERE user_id = '{user_id}'"
                 cursor.execute(query)
+                logger.info(query)
                 return cursor.fetchone()[0]
             except:
                 logger.error("execute error")

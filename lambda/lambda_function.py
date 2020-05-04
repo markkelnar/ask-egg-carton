@@ -65,7 +65,7 @@ class ReportIntentHandler(AbstractRequestHandler):
 
         #speak_output = f"connect {con.database} {con.dbuser} {con.port}"
         speak_output = f"I see {sum} eggs collected total and averaging {avg} per day for {day_window} days"
-        logger.info(user_id, speak_output)
+        logger.info(speak_output)
 
         return (
             handler_input.response_builder
@@ -95,7 +95,7 @@ class CollectEggsIntentHandler(AbstractRequestHandler):
             speak_output = f"{egg_value} is not a valid number"
         con.disconnect()
 
-        logger.info(user_id, speak_output)
+        logger.info(speak_output)
 
         return (
             handler_input.response_builder
