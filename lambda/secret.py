@@ -1,3 +1,15 @@
+# Use this code snippet in your app.
+# If you need more information about configurations or implementing the sample code, visit the AWS docs:   
+# https://aws.amazon.com/developers/getting-started/python/
+
+import boto3
+import base64
+from botocore.exceptions import ClientError
+
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
 
 class SecretThing:
     def get_secret(self):
@@ -21,6 +33,7 @@ class SecretThing:
                 SecretId=secret_name
             )
         except ClientError as e:
+            logger.error("Secrets error happened", e.response['Error']['Code'])
             if e.response['Error']['Code'] == 'DecryptionFailureException':
                 # Secrets Manager can't decrypt the protected secret text using the provided KMS key.
                 # Deal with the exception here, and/or rethrow at your discretion.
@@ -45,8 +58,6 @@ class SecretThing:
             # Decrypts secret using the associated KMS CMK.
             # Depending on whether the secret is a string or binary, one of these fields will be populated.
             if 'SecretString' in get_secret_value_response:
-                secret = get_secret_value_response['SecretString']
+                return get_secret_value_response['SecretString']
             else:
-                decoded_binary_secret = base64.b64decode(get_secret_value_response['SecretBinary'])
-                
-        # Your code goes here.
+                return base64.b64decode(get_secret_value_response['SecretBinary'])
